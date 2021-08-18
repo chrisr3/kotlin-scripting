@@ -3,22 +3,74 @@ plugins {
     id 'biz.aQute.bnd.builder'
 }
 
+configurations {
+    bundle {
+        canBeResolved = false
+    }
+    bundle.extendsFrom runtimeClasspath
+
+    testRuntimeClasspath {
+        exclude module: 'kotlinx-coroutines-core'
+        exclude module: 'kotlin-daemon-embeddable'
+        exclude module: 'kotlin-daemon-client'
+    }
+}
+
 dependencies {
+    compileOnly "biz.aQute.bnd:biz.aQute.bnd.annotation:$bndVersion"
     compileOnly "org.osgi:osgi.annotation:$osgiVersion"
-    implementation "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:$kotlinVersion"
-    implementation "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion"
-    implementation "org.jetbrains.kotlin:kotlin-script-util:$kotlinVersion"
+    compileOnly "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:$kotlinVersion"
+    compileOnly "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:$kotlinVersion"
+    compileOnly "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion"
+    compileOnly "org.jetbrains.kotlin:kotlin-script-util:$kotlinVersion"
+    compileOnly "org.jetbrains.intellij.deps:trove4j:$trove4jVersion"
+    compileOnly "net.java.dev.jna:jna:$jnaVersion"
     implementation "net.corda.kotlin:kotlin-stdlib-jdk8-osgi:$kotlinVersion"
-    implementation("net.java.dev.jna:jna:$jnaVersion")
+
+    testRuntimeOnly "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:$kotlinVersion"
+    testRuntimeOnly "org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:$kotlinVersion"
+    testRuntimeOnly "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion"
+    testRuntimeOnly "org.jetbrains.kotlin:kotlin-script-util:$kotlinVersion"
+    testRuntimeOnly "org.jetbrains.intellij.deps:trove4j:trove4jVersion"
+    testRuntimeOnly "net.java.dev.jna:jna:$jnaVersion"
 
     testImplementation "org.assertj:assertj-core:$assertjVersion"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
 }
 
-tasks.named('jar', Jar) {
-    bnd '''
+def jar = tasks.named('jar', Jar) {
+    bnd """\
 Bundle-Name: Kotlin Scriptor
 Bundle-SymbolicName: com.example.kotlin.scriptor
-'''
+DynamicImport-Package: kotlin.*
+Import-Package:\
+    !com.jcabi.aether,\
+    !android.os,\
+    !javax.annotation,\
+    !one.profiler,\
+    !org.sonatype.*,\
+    !org.checkerframework.*,\
+    !org.jetbrains.annotations,\
+    !org.jetbrains.kotlin.com.google.errorprone.*,\
+    !org.jetbrains.kotlin.com.intellij.*,\
+    org.jetbrains.kotlin.daemon.*;resolution:=optional,\
+    kotlinx.coroutines.*;resolution:=optional,\
+    kotlin,\
+    *
+-includeresource \
+    @kotlin-scripting-compiler-embeddable-${kotlinVersion}.jar,\
+    @kotlin-scripting-compiler-impl-embeddable-${kotlinVersion}.jar,\
+    @kotlin-compiler-embeddable-${kotlinVersion}.jar,\
+    @kotlin-scripting-common-${kotlinVersion}.jar,\
+    @kotlin-scripting-jvm-${kotlinVersion}.jar,\
+    @kotlin-script-runtime-${kotlinVersion}.jar,\
+    @kotlin-script-util-${kotlinVersion}.jar,\
+    @trove4j-${trove4jVersion}.jar,\
+    @jna-${jnaVersion}.jar
+"""
+}
+
+artifacts {
+    bundle jar
 }

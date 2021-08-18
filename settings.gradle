@@ -15,3 +15,7 @@ dependencyResolutionManagement {
 }
 
 include 'engine'
+include 'engine:bundle'
+include 'osgi'
+include 'osgi:test-api'
+include 'osgi:test-example'

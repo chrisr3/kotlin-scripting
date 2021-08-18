@@ -1,0 +1,61 @@
+# Ensure Bnd uses the same Java executable as Gradle.
+java: ${project.javaExecutable}
+
+-tester: biz.aQute.tester.junit-platform
+-runfw: org.apache.felix.framework
+-runee: JavaSE-11
+-runtrace: true
+
+-runvm: \
+    --add-opens, 'java.base/java.net=ALL-UNNAMED'
+
+# Enable debugging.
+# -runjdb: 1044
+
+-runsystempackages: \
+    com.sun.tools.javac.code,\
+    com.sun.tools.javac.file,\
+    com.sun.tools.javac.jvm,\
+    com.sun.tools.javac.main,\
+    com.sun.tools.javac.model,\
+    com.sun.tools.javac.parser,\
+    com.sun.tools.javac.tree,\
+    com.sun.tools.javac.util,\
+    jdk.internal.org.objectweb.asm,\
+    sun.nio.ch
+
+-runproperties: \
+    kotlin.script.classpath=${project.kotlinScriptClasspath},\
+    org.slf4j.simpleLogger.defaultLogLevel=info,\
+    org.slf4j.simpleLogger.showShortLogName=true,\
+    org.slf4j.simpleLogger.showThreadName=false,\
+    org.slf4j.simpleLogger.showDateTime=true,\
+    org.slf4j.simpleLogger.dateTimeFormat='yyyy-MM-dd HH:mm:ss:SSS Z'
+
+-runrequires: \
+    bnd.identity;id='osgi-tests',\
+    bnd.identity;id='junit-jupiter-engine',\
+    bnd.identity;id='junit-platform-launcher',\
+    bnd.identity;id='slf4j.simple'
+-runstartlevel: \
+    order=sortbynameversion,\
+    begin=-1
+
+-runbundles: \
+	com.example.kotlin.scriptor;version='[1.0.0,1.0.1)',\
+	junit-jupiter-api;version='[5.7.2,5.7.3)',\
+	junit-jupiter-engine;version='[5.7.2,5.7.3)',\
+	junit-platform-commons;version='[1.7.2,1.7.3)',\
+	junit-platform-engine;version='[1.7.2,1.7.3)',\
+	junit-platform-launcher;version='[1.7.2,1.7.3)',\
+	org.apache.aries.spifly.dynamic.bundle;version='[1.3.2,1.3.3)',\
+	org.jetbrains.kotlin.osgi-bundle;version='[1.4.32,1.4.33)',\
+	org.objectweb.asm;version='[9.0.0,9.0.1)',\
+	org.objectweb.asm.commons;version='[9.0.0,9.0.1)',\
+	org.objectweb.asm.tree;version='[9.0.0,9.0.1)',\
+	org.objectweb.asm.tree.analysis;version='[9.0.0,9.0.1)',\
+	org.objectweb.asm.util;version='[9.0.0,9.0.1)',\
+	org.opentest4j;version='[1.2.0,1.2.1)',\
+	osgi-tests;version='[1.0.0,1.0.1)',\
+	slf4j.api;version='[1.7.32,1.7.33)',\
+	slf4j.simple;version='[1.7.32,1.7.33)'
