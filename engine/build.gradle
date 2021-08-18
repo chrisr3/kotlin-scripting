@@ -1,0 +1,24 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+    id 'biz.aQute.bnd.builder'
+}
+
+dependencies {
+    compileOnly "org.osgi:osgi.annotation:$osgiVersion"
+    implementation "org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-script-util:$kotlinVersion"
+    implementation "net.corda.kotlin:kotlin-stdlib-jdk8-osgi:$kotlinVersion"
+    implementation("net.java.dev.jna:jna:$jnaVersion")
+
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitVersion"
+}
+
+tasks.named('jar', Jar) {
+    bnd '''
+Bundle-Name: Kotlin Scriptor
+Bundle-SymbolicName: com.example.kotlin.scriptor
+'''
+}
